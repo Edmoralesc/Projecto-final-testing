@@ -1,0 +1,29 @@
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+name: demo
+nodes:
+  - role: control-plane
+    kubeadmConfigPatches:
+      - |
+        kind: ClusterConfiguration
+        apiServer:
+          certSANs:
+            - "PUBLIC-IP" # AGREGAR LA IP PUBLICA DE LA VM
+            - "localhost"
+            - "127.0.0.1"
+            - "0.0.0.0"
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 30080
+        hostPort: 30080
+        protocol: TCP
+  - role: worker
+  - role: worker
+  - role: worker
