@@ -18,10 +18,12 @@ docker push emoralesc/frontend:latest
 
 #start the containers
 kubectl apply -f k8s/deployment-db.yaml 
-kubectl apply -f k8s/deployment-app.yaml 
+kubectl apply -f k8s/deployment-api.yaml 
 
 kubectl apply -f k8s/deployment-frontend.yaml 
 
 
 #access api externally
+http://localhost:8000/api/ping
+http://localhost:8000/api/echo?
 kubectl port-forward service/fastapi-service 8000:80
