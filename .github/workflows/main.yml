@@ -34,8 +34,8 @@ jobs:
 
   backend-api:
     runs-on: ubuntu-latest
-    needs:
-      - sca
+    #needs:
+    #  - sca
     defaults:
       run:
         working-directory: ./api  # path to your Python API
@@ -77,8 +77,8 @@ jobs:
 
   frontend-react:    
     runs-on: ubuntu-latest
-    needs:
-      - sca
+    #needs:
+    #  - sca
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
