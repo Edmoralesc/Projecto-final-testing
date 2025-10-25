@@ -26,6 +26,16 @@ jobs:
       - name: Run tests
         run: pytest --maxfail=1 --disable-warnings -q
 
+
+      # Bandit scan of the code
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Run Bandit security scan
+        run: bandit -r ./api -f json -o bandit-report.json
+
+
+
       - name: Build Docker image
         run: docker build -t emoralesc/api:latest .
 
@@ -69,9 +79,8 @@ jobs:
           name: frontend-coverage
         continue-on-error: true
 
-
       - name: Build Docker image
-        run: docker build -t emoralesc/api:latest .
+        run: docker build -t emoralesc/api:latest -f frontend/Dockerfile frontend/
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
