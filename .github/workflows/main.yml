@@ -10,15 +10,39 @@ permissions:
   actions: read
 
 jobs:
-  backend-api:
+  
+  codeql:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./api  # path to your Python API
     steps:
+      - uses: actions/checkout@v3
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript, python
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          # Fail the job if vulnerabilities of severity medium or higher are detected
+          fail-on: medium
+
+
+
+  backend-api:
+    runs-on: ubuntu-latest
+    needs:
+      - sca
+    defaults:
+      run:
+        working-directory: ./api  # path to your Python API
+    steps:
+      #checkou code
       - name: Checkout code
         uses: actions/checkout@v4
 
+      #prepare python environment
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -31,14 +55,9 @@ jobs:
         run: pytest --maxfail=1 --disable-warnings -q
 
 
-      # Bandit scan of the code
-      - name: Install Bandit
-        run: pip install bandit
-
-      - name: Run Bandit security scan
-        run: bandit -r ./api -f json -o bandit-report.json
 
 
+      #create docker image
 
       - name: Build Docker image
         run: docker build -t emoralesc/api:latest .
@@ -56,6 +75,8 @@ jobs:
 
   frontend-react:    
     runs-on: ubuntu-latest
+    needs:
+      - sca
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -100,18 +121,34 @@ jobs:
         run: echo ${{ steps.meta.outputs.digest }}
 
 
-
-
-  codeql:
+  sca:
     runs-on: ubuntu-latest
     needs:
-      - backend-api
-      - frontend-react
+      - codeql
     steps:
-      - uses: actions/checkout@v3
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+      - uses: actions/checkout@v4
+
+      # SCA scan for Python API
+      - name: Snyk Python scan
+        uses: snyk/actions/python@v2
         with:
-          languages: javascript, python
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+          args: "--all-projects --severity-threshold=medium"
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        working-directory: ./api
+
+      # SCA scan for React frontend (Node.js)
+      - name: Snyk Node.js scan
+        uses: snyk/actions/node@v2
+        with:
+          args: "--all-projects --severity-threshold=medium"
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        working-directory: ./frontend
+
+      # Optionally upload scan results to GitHub Security tab
+      - name: Upload Snyk results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk.sarif
