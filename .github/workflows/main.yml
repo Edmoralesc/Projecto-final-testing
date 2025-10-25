@@ -98,4 +98,16 @@ jobs:
 
 
 
-
+  codeql:
+    runs-on: ubuntu-latest
+    needs:
+      - backend-api
+      - frontend-react
+    steps:
+      - uses: actions/checkout@v3
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript, python
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
