@@ -4,6 +4,10 @@ on:
   push:
     branches: [ main, master, develop ]
 
+permissions:
+  contents: read
+  security-events: write
+  actions: read
 
 jobs:
   backend-api:
