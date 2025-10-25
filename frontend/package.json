@@ -41,6 +41,13 @@
     "src/**/*.{js,jsx}",
     "!src/reportWebVitals.js"
   ]
-}
+},
+
+  "overrides": {
+    "nth-check": "^2.0.1",
+    "serialize-javascript": "^6.0.2",
+    "postcss": "^8.4.31",
+    "webpack-dev-server": "^5.2.1"
+  }
 }
 
