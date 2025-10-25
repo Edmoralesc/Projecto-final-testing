@@ -145,7 +145,7 @@ jobs:
         uses: snyk/actions/setup@master
 
       - name: Run Snyk test
-        run: snyk test --file=/requirements.txt
+        run: snyk test --file=./requirements.txt
         working-directory: ./api
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
