@@ -145,6 +145,6 @@ jobs:
         uses: snyk/actions/node@master
         with:
           command: test
-          directory: ./frontend
+          args: ./frontend
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
