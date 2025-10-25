@@ -10,17 +10,17 @@ class Message(BaseModel):
     message: str
 
 # Remove the prefix from router since root_path handles it
-router = APIRouter()
+from fastapi import FastAPI
 
-@router.get("/ping")
+app = FastAPI()
+
+@app.get("/api/ping")
 def ping():
-    return {"status": "ok"}
+    return {"message": "pong"}
 
-@router.post("/echo")
+@app.get("/api/echo")
 def echo(msg: Message):
     return {"echo": msg.message}
-
-app.include_router(router)
 
 # --- last-resort catch-all handler ---
 @app.middleware("http")
