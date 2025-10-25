@@ -19,11 +19,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: javascript, python
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
         with:
           # Fail the job if vulnerabilities of severity medium or higher are detected
           fail-on: medium
@@ -127,32 +127,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Install Snyk CLI
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
       - name: Install Snyk CLI
         run: npm install -g snyk
 
-      # SCA scan for Python API
       - name: Snyk Python scan
         run: snyk test --all-projects --severity-threshold=medium --sarif > snyk-python.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         working-directory: ./api
 
-      # SCA scan for React frontend (Node.js)
       - name: Snyk Node.js scan
         run: snyk test --all-projects --severity-threshold=medium --sarif > snyk-node.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         working-directory: ./frontend
 
-      # Optionally upload scan results to GitHub Security tab (Python)
       - name: Upload Snyk Python SARIF
         if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ./api/snyk-python.sarif
 
-      # Optionally upload scan results to GitHub Security tab (Node.js)
       - name: Upload Snyk Node SARIF
         if: always()
         uses: github/codeql-action/upload-sarif@v3
