@@ -78,10 +78,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/cenfotec-frontend:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/cenfotec-frontend:buildcache,mode=max
+          tags: emoralesc/frontend:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/frontend:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/frontend:buildcache,mode=max
 
       - name: Image digest
         run: echo ${{ steps.meta.outputs.digest }}
