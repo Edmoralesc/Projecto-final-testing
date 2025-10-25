@@ -141,7 +141,7 @@ jobs:
         uses: snyk/actions/python@master
         with:
           command: test
-          args: --file=api/requirements.txt --command=python3 -m pip install -r api/requirements.txt
+          args: --file=api/requirements.txt 
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
