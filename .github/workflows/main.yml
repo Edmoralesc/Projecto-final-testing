@@ -137,13 +137,19 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Run Snyk Python test
-        uses: snyk/actions/python@master
-        with:
-          command: test
-          args: --file=api/requirements.txt 
+      - name: Install Python deps
+        run: pip install -r requirements.txt
+        working-directory: ./api
+
+      - name: Setup Snyk
+        uses: snyk/actions/setup@master
+
+      - name: Run Snyk test
+        run: snyk test --file=api/requirements.txt
+        working-directory: ./api
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
 
       ### start node testing
       - name: Set up Node.js
