@@ -16,11 +16,12 @@ app = FastAPI()
 
 @app.get("/api/ping")
 def ping():
-    return {"message": "pong"}
+    return {"status": "ok"}
 
-@app.get("/api/echo")
+@app.post("/api/echo")
 def echo(msg: Message):
     return {"echo": msg.message}
+
 
 # --- last-resort catch-all handler ---
 @app.middleware("http")
