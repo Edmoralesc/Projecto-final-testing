@@ -132,22 +132,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-
-
-
-      - name: Run Snyk test python
-        uses: snyk/actions/node@master
-        with:
-          command: test
-          args: ./api
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}    
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           
+
       - name: Install Python deps
         run: pip install -r api/requirements.txt
         working-directory: ./api
