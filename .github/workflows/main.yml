@@ -137,6 +137,29 @@ jobs:
         with:
           node-version: '18'
 
+
+      - name: Run Snyk test python
+        uses: snyk/actions/node@master
+        with:
+          command: test
+          args: ./api
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}    
+
+      - name: Install Python deps
+        run: pip install -r api/requirements.txt
+        working-directory: ./api
+
+        
+      - name: Run Snyk Python test
+        uses: snyk/actions/python@master
+        with:
+          command: test
+          directory: api
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+
       - name: Install dependencies
         run: npm install
         working-directory: ./frontend
