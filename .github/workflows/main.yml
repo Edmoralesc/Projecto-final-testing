@@ -99,6 +99,10 @@ jobs:
         run: npm install --save-dev vitest @testing-library/react @testing-library/jest-dom jsdom
         working-directory: ./frontend
 
+      - name: Install optional Vitest coverage
+        run: npm install --save-dev @vitest/coverage-v8
+        working-directory: ./frontend
+        
       - name: Run tests
         working-directory: ./frontend
         run: npm test -- --coverage --watchAll=false
