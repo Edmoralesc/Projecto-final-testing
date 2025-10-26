@@ -2,7 +2,7 @@ name: React CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [ main, master, develop , vite_migration]
 
 permissions:
   contents: read
