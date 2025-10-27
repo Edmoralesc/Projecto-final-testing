@@ -1,0 +1,43 @@
+[init] Using cluster=fastticket-eks region=us-east-1 role=fastticket-ebs-csi-irsa
+[iam] ACCOUNT_ID=665516437576 OIDC_ID=3B41BA9FFFC52A90E17EE3A80FECDDD2
+[iam] Creating role fastticket-ebs-csi-irsa
+{
+    "Role": {
+        "Path": "/",
+        "RoleName": "fastticket-ebs-csi-irsa",
+        "RoleId": "AROAZV4666BEE26F442B6",
+        "Arn": "arn:aws:iam::665516437576:role/fastticket-ebs-csi-irsa",
+        "CreateDate": "2025-10-27T17:48:25+00:00",
+        "AssumeRolePolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {
+                        "Federated": "arn:aws:iam::665516437576:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/3B41BA9FFFC52A90E17EE3A80FECDDD2"
+                    },
+                    "Action": "sts:AssumeRoleWithWebIdentity",
+                    "Condition": {
+                        "StringEquals": {
+                            "oidc.eks.us-east-1.amazonaws.com/id/3B41BA9FFFC52A90E17EE3A80FECDDD2:aud": "sts.amazonaws.com",
+                            "oidc.eks.us-east-1.amazonaws.com/id/3B41BA9FFFC52A90E17EE3A80FECDDD2:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+
+usage: aws [options] <command> <subcommand> [<subcommand> ...] [parameters]
+To see help text, you can run:
+
+  aws help
+  aws <command> help
+  aws <command> <subcommand> help
+
+Unknown options: -o, text
+
+[iam] Attaching AmazonEBSCSIDriverPolicy to fastticket-ebs-csi-irsa
+
+An error occurred (NoSuchEntity) when calling the AttachRolePolicy operation: Policy arn:aws:iam::aws:policy/AmazonEBSCSIDriverPolicy does not exist or is not attachable.

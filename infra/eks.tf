@@ -7,13 +7,13 @@ module "eks" {
   version = "~> 21.0"
 
   # Cluster
-  name                   = "fastticket-eks"   # Cluster name used for tags and Kubernetes discovery
-  kubernetes_version     = "1.29"             # Pinned minor version for stability
-  enable_irsa            = true               # Enable IAM Roles for Service Accounts (secure add-on access)
-  endpoint_public_access = true               # Public API endpoint; restrict via security groups for production
+  name                   = "fastticket-eks" # Cluster name used for tags and Kubernetes discovery
+  kubernetes_version     = "1.29"           # Pinned minor version for stability
+  enable_irsa            = true             # Enable IAM Roles for Service Accounts (secure add-on access)
+  endpoint_public_access = true             # Public API endpoint; restrict via security groups for production
 
   # Networking
-  vpc_id     = aws_vpc.this.id                # Attach cluster to our VPC
+  vpc_id     = aws_vpc.this.id                     # Attach cluster to our VPC
   subnet_ids = [for s in aws_subnet.public : s.id] # Use public subnets for simplicity (incurs NAT/egress via IGW)
 
   # Access Entries (Cluster Access Management)
@@ -47,15 +47,15 @@ module "eks" {
   eks_managed_node_groups = {
     ng_main = {
       name           = "ng-main"
-      desired_size   = 1                     # Keep minimal to reduce cost; increase for load
+      desired_size   = 1 # Keep minimal to reduce cost; increase for load
       min_size       = 1
       max_size       = 1
-      capacity_type  = "ON_DEMAND"           # Change to SPOT to reduce cost with interruption risk
-      instance_types = ["t3.large"]          # ~2 vCPU/8GiB; adjust based on workload
+      capacity_type  = "ON_DEMAND"  # Change to SPOT to reduce cost with interruption risk
+      instance_types = ["t3.large"] # ~2 vCPU/8GiB; adjust based on workload
       # Prefer AL2023; fallback to AL2 if unsupported
-  ami_type = "AL2023_x86_64_STANDARD"   # Prefer AL2023; fallback AL2 (deprecated after EKS 1.32)
-  labels   = { workload = "general" }
-  tags     = local.tags                  # Propagate project/env tags for cost tracking
+      ami_type = "AL2023_x86_64_STANDARD" # Prefer AL2023; fallback AL2 (deprecated after EKS 1.32)
+      labels   = { workload = "general" }
+      tags     = local.tags # Propagate project/env tags for cost tracking
 
       # Use precreated node IAM role with required policies
       iam_role_arn = aws_iam_role.eks_node_role.arn # Pre-created node role with EKS and CNI policies

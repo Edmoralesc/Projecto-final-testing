@@ -1,0 +1,4 @@
+NAME                                 READY   STATUS    RESTARTS   AGE     IP            NODE                         NOMINATED NODE   READINESS GATES
+ebs-csi-controller-5fcdb8d8d-r96bh   6/6     Running   0          32s     10.0.50.147   ip-10-0-51-38.ec2.internal   <none>           <none>
+ebs-csi-controller-5fcdb8d8d-x2ffv   6/6     Running   0          32s     10.0.62.110   ip-10-0-51-38.ec2.internal   <none>           <none>
+ebs-csi-node-bq68v                   3/3     Running   0          3h25m   10.0.49.4     ip-10-0-51-38.ec2.internal   <none>           <none>

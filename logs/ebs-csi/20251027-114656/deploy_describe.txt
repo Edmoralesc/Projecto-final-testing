@@ -1,0 +1,180 @@
+Name:                   ebs-csi-controller
+Namespace:              kube-system
+CreationTimestamp:      Mon, 27 Oct 2025 08:32:13 -0600
+Labels:                 app.kubernetes.io/component=csi-driver
+                        app.kubernetes.io/managed-by=EKS
+                        app.kubernetes.io/name=aws-ebs-csi-driver
+                        app.kubernetes.io/version=1.51.1
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               app=ebs-csi-controller,app.kubernetes.io/name=aws-ebs-csi-driver
+Replicas:               2 desired | 2 updated | 2 total | 0 available | 2 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  1 max unavailable, 25% max surge
+Pod Template:
+  Labels:           app=ebs-csi-controller
+                    app.kubernetes.io/component=csi-driver
+                    app.kubernetes.io/managed-by=EKS
+                    app.kubernetes.io/name=aws-ebs-csi-driver
+                    app.kubernetes.io/version=1.51.1
+  Service Account:  ebs-csi-controller-sa
+  Containers:
+   ebs-plugin:
+    Image:           602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-ebs-csi-driver:v1.51.1
+    Port:            9808/TCP (healthz)
+    Host Port:       0/TCP (healthz)
+    SeccompProfile:  RuntimeDefault
+    Args:
+      controller
+      --endpoint=$(CSI_ENDPOINT)
+      --k8s-tag-cluster-id=fastticket-eks
+      --batching=true
+      --logging-format=text
+      --user-agent-extra=eks
+      --v=2
+    Limits:
+      memory:  256Mi
+    Requests:
+      cpu:      10m
+      memory:   40Mi
+    Liveness:   http-get http://:healthz/healthz delay=10s timeout=60s period=10s #success=1 #failure=10
+    Readiness:  http-get http://:healthz/healthz delay=10s timeout=60s period=10s #success=1 #failure=5
+    Environment:
+      CSI_ENDPOINT:            unix:///var/lib/csi/sockets/pluginproxy/csi.sock
+      CSI_NODE_NAME:            (v1:spec.nodeName)
+      AWS_ACCESS_KEY_ID:       <set to the key 'key_id' in secret 'aws-secret'>                Optional: true
+      AWS_SECRET_ACCESS_KEY:   <set to the key 'access_key' in secret 'aws-secret'>            Optional: true
+      AWS_EC2_ENDPOINT:        <set to the key 'endpoint' of config map 'aws-meta'>            Optional: true
+      AWS_SAGEMAKER_ENDPOINT:  <set to the key 'sagemaker_endpoint' of config map 'aws-meta'>  Optional: true
+      AWS_REGION:              us-east-1
+    Mounts:
+      /var/lib/csi/sockets/pluginproxy/ from socket-dir (rw)
+   csi-provisioner:
+    Image:           602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-provisioner:v5.3.0-eksbuild.4
+    Port:            <none>
+    Host Port:       <none>
+    SeccompProfile:  RuntimeDefault
+    Args:
+      --timeout=60s
+      --csi-address=$(ADDRESS)
+      --v=2
+      --feature-gates=Topology=true
+      --extra-create-metadata
+      --leader-election=true
+      --default-fstype=ext4
+      --kube-api-qps=20
+      --kube-api-burst=100
+      --worker-threads=100
+      --retry-interval-max=30m
+    Limits:
+      memory:  256Mi
+    Requests:
+      cpu:     10m
+      memory:  40Mi
+    Environment:
+      ADDRESS:  /var/lib/csi/sockets/pluginproxy/csi.sock
+    Mounts:
+      /var/lib/csi/sockets/pluginproxy/ from socket-dir (rw)
+   csi-attacher:
+    Image:           602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-attacher:v4.9.0-eksbuild.4
+    Port:            <none>
+    Host Port:       <none>
+    SeccompProfile:  RuntimeDefault
+    Args:
+      --timeout=6m
+      --csi-address=$(ADDRESS)
+      --v=2
+      --leader-election=true
+      --kube-api-qps=20
+      --kube-api-burst=100
+      --worker-threads=100
+      --retry-interval-max=5m
+    Limits:
+      memory:  256Mi
+    Requests:
+      cpu:     10m
+      memory:  40Mi
+    Environment:
+      ADDRESS:  /var/lib/csi/sockets/pluginproxy/csi.sock
+    Mounts:
+      /var/lib/csi/sockets/pluginproxy/ from socket-dir (rw)
+   csi-snapshotter:
+    Image:           602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-snapshotter:v8.3.0-eksbuild.2
+    Port:            <none>
+    Host Port:       <none>
+    SeccompProfile:  RuntimeDefault
+    Args:
+      --csi-address=$(ADDRESS)
+      --leader-election=true
+      --v=2
+      --extra-create-metadata
+      --kube-api-qps=20
+      --kube-api-burst=100
+      --worker-threads=100
+      --retry-interval-max=30m
+    Limits:
+      memory:  256Mi
+    Requests:
+      cpu:     10m
+      memory:  40Mi
+    Environment:
+      ADDRESS:  /var/lib/csi/sockets/pluginproxy/csi.sock
+    Mounts:
+      /var/lib/csi/sockets/pluginproxy/ from socket-dir (rw)
+   csi-resizer:
+    Image:           602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-resizer:v1.14.0-eksbuild.4
+    Port:            <none>
+    Host Port:       <none>
+    SeccompProfile:  RuntimeDefault
+    Args:
+      --timeout=60s
+      --extra-modify-metadata
+      --csi-address=$(ADDRESS)
+      --v=2
+      --handle-volume-inuse-error=false
+      --leader-election=true
+      --kube-api-qps=20
+      --kube-api-burst=100
+      --workers=100
+      --retry-interval-max=30m
+    Limits:
+      memory:  256Mi
+    Requests:
+      cpu:     10m
+      memory:  40Mi
+    Environment:
+      ADDRESS:  /var/lib/csi/sockets/pluginproxy/csi.sock
+    Mounts:
+      /var/lib/csi/sockets/pluginproxy/ from socket-dir (rw)
+   liveness-probe:
+    Image:      602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/livenessprobe:v2.16.0-eksbuild.5
+    Port:       <none>
+    Host Port:  <none>
+    Args:
+      --csi-address=/csi/csi.sock
+      --probe-timeout=60s
+    Limits:
+      memory:  256Mi
+    Requests:
+      cpu:        10m
+      memory:     40Mi
+    Environment:  <none>
+    Mounts:
+      /csi from socket-dir (rw)
+  Volumes:
+   socket-dir:
+    Type:               EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:             
+    SizeLimit:          <unset>
+  Priority Class Name:  system-cluster-critical
+  Node-Selectors:       kubernetes.io/os=linux
+  Tolerations:          :NoExecute op=Exists for 300s
+                        CriticalAddonsOnly op=Exists
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      False   MinimumReplicasUnavailable
+  Progressing    False   ProgressDeadlineExceeded
+OldReplicaSets:  <none>
+NewReplicaSet:   ebs-csi-controller-cbd467c5b (2/2 replicas created)
+Events:          <none>

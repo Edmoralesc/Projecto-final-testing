@@ -1,0 +1,15 @@
+[init] Using cluster=fastticket-eks region=us-east-1 role=fastticket-ebs-csi-irsa
+[iam] ACCOUNT_ID=665516437576 OIDC_ID=3B41BA9FFFC52A90E17EE3A80FECDDD2
+[iam] Updating trust policy for role fastticket-ebs-csi-irsa
+[iam] Managed policy AmazonEBSCSIDriverPolicy not found. Creating inline fallback policy.
+[eks] Attempting to update addon to use role arn:aws:iam::665516437576:role/fastticket-ebs-csi-irsa
+[eks] update-addon failed; falling back to SA annotation
+serviceaccount/ebs-csi-controller-sa annotated
+[k8s] Restarting and waiting for ebs-csi-controller rollout
+deployment.apps/ebs-csi-controller restarted
+Waiting for deployment "ebs-csi-controller" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "ebs-csi-controller" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "ebs-csi-controller" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "ebs-csi-controller" rollout to finish: 1 old replicas are pending termination...
+deployment "ebs-csi-controller" successfully rolled out
+[done] IRSA fix applied. Role: arn:aws:iam::665516437576:role/fastticket-ebs-csi-irsa

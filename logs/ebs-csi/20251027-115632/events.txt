@@ -1,0 +1,57 @@
+36s         Normal    Scheduled           pod/ebs-csi-controller-856bf68dd6-8f42h             Successfully assigned kube-system/ebs-csi-controller-856bf68dd6-8f42h to ip-10-0-51-38.ec2.internal
+36s         Normal    Scheduled           pod/ebs-csi-controller-856bf68dd6-rlll2             Successfully assigned kube-system/ebs-csi-controller-856bf68dd6-rlll2 to ip-10-0-51-38.ec2.internal
+59m         Warning   Unhealthy           pod/ebs-csi-controller-cbd467c5b-mfqb7              Readiness probe failed: HTTP probe failed with statuscode: 500
+49m         Warning   Unhealthy           pod/ebs-csi-controller-cbd467c5b-mfqb7              Liveness probe failed: HTTP probe failed with statuscode: 500
+34m         Normal    Pulled              pod/ebs-csi-controller-cbd467c5b-mfqb7              Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-ebs-csi-driver:v1.51.1" already present on machine
+14m         Warning   BackOff             pod/ebs-csi-controller-cbd467c5b-mfqb7              Back-off restarting failed container csi-provisioner in pod ebs-csi-controller-cbd467c5b-mfqb7_kube-system(4697bd8f-fb92-4584-a123-d44e72dc1e01)
+14m         Warning   Unhealthy           pod/ebs-csi-controller-cbd467c5b-s7n8d              Readiness probe failed: HTTP probe failed with statuscode: 500
+4m20s       Warning   BackOff             pod/ebs-csi-controller-cbd467c5b-mfqb7              Back-off restarting failed container ebs-plugin in pod ebs-csi-controller-cbd467c5b-mfqb7_kube-system(4697bd8f-fb92-4584-a123-d44e72dc1e01)
+4m16s       Warning   BackOff             pod/ebs-csi-controller-cbd467c5b-s7n8d              Back-off restarting failed container ebs-plugin in pod ebs-csi-controller-cbd467c5b-s7n8d_kube-system(2759c249-bb5d-4dab-83a1-d6c144d903eb)
+37s         Normal    SuccessfulDelete    replicaset/ebs-csi-controller-cbd467c5b             Deleted pod: ebs-csi-controller-cbd467c5b-s7n8d
+37s         Normal    ScalingReplicaSet   deployment/ebs-csi-controller                       Scaled up replica set ebs-csi-controller-856bf68dd6 to 1
+37s         Normal    ScalingReplicaSet   deployment/ebs-csi-controller                       Scaled down replica set ebs-csi-controller-cbd467c5b to 1 from 2
+37s         Normal    ScalingReplicaSet   deployment/ebs-csi-controller                       Scaled up replica set ebs-csi-controller-856bf68dd6 to 2 from 1
+37s         Normal    SuccessfulCreate    replicaset/ebs-csi-controller-856bf68dd6            Created pod: ebs-csi-controller-856bf68dd6-8f42h
+37s         Normal    SuccessfulCreate    replicaset/ebs-csi-controller-856bf68dd6            Created pod: ebs-csi-controller-856bf68dd6-rlll2
+36s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-rlll2             Created container: csi-attacher
+36s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-8f42h             Started container csi-provisioner
+36s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-8f42h             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-ebs-csi-driver:v1.51.1" already present on machine
+36s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-8f42h             Created container: ebs-plugin
+36s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-8f42h             Started container ebs-plugin
+36s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-8f42h             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-provisioner:v5.3.0-eksbuild.4" already present on machine
+36s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-rlll2             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-ebs-csi-driver:v1.51.1" already present on machine
+36s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-rlll2             Created container: ebs-plugin
+36s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-rlll2             Started container ebs-plugin
+36s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-rlll2             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-provisioner:v5.3.0-eksbuild.4" already present on machine
+36s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-rlll2             Created container: csi-provisioner
+36s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-rlll2             Started container csi-provisioner
+36s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-rlll2             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-attacher:v4.9.0-eksbuild.4" already present on machine
+36s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-8f42h             Created container: csi-provisioner
+36s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-8f42h             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-attacher:v4.9.0-eksbuild.4" already present on machine
+36s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-8f42h             Created container: csi-attacher
+36s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-8f42h             Started container csi-attacher
+36s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-8f42h             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-snapshotter:v8.3.0-eksbuild.2" already present on machine
+36s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-8f42h             Created container: csi-snapshotter
+35s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-rlll2             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-snapshotter:v8.3.0-eksbuild.2" already present on machine
+35s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-rlll2             Started container csi-snapshotter
+35s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-rlll2             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/livenessprobe:v2.16.0-eksbuild.5" already present on machine
+35s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-rlll2             Created container: liveness-probe
+35s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-rlll2             Started container liveness-probe
+35s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-8f42h             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-resizer:v1.14.0-eksbuild.4" already present on machine
+35s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-8f42h             Started container csi-snapshotter
+35s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-8f42h             Started container csi-resizer
+35s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-rlll2             Started container csi-attacher
+35s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-rlll2             Created container: csi-snapshotter
+35s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-rlll2             Started container csi-resizer
+35s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-rlll2             Created container: csi-resizer
+35s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-rlll2             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-resizer:v1.14.0-eksbuild.4" already present on machine
+35s         Normal    LeaderElection      lease/ebs-csi-aws-com                               1761587764967-6433-ebs-csi-aws-com became leader
+35s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-8f42h             Created container: csi-resizer
+35s         Normal    LeaderElection      lease/external-snapshotter-leader-ebs-csi-aws-com   ebs-csi-controller-856bf68dd6-8f42h became leader
+35s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-8f42h             Started container liveness-probe
+35s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-8f42h             Created container: liveness-probe
+35s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-8f42h             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/livenessprobe:v2.16.0-eksbuild.5" already present on machine
+35s         Normal    LeaderElection      lease/external-resizer-ebs-csi-aws-com              ebs-csi-controller-856bf68dd6-8f42h became leader
+35s         Normal    LeaderElection      lease/external-attacher-leader-ebs-csi-aws-com      ebs-csi-controller-856bf68dd6-8f42h became leader
+26s         Normal    ScalingReplicaSet   deployment/ebs-csi-controller                       Scaled down replica set ebs-csi-controller-cbd467c5b to 0 from 1
+26s         Normal    SuccessfulDelete    replicaset/ebs-csi-controller-cbd467c5b             Deleted pod: ebs-csi-controller-cbd467c5b-mfqb7

@@ -1,3 +1,45 @@
+FastTicket — CI/CD y DevSecOps (AWS EKS)
+
+Resumen del pipeline
+- CI (Pull Requests y branches):
+   - Backend: Python 3.12 + pytest.
+   - Frontend: Node 20 + npm test y build.
+   - SCA: pip-audit (api/) y npm audit (frontend/). Reportes como artifacts.
+   - Build & Scan: imágenes Docker (backend/frontend) y Trivy (HIGH/CRITICAL) sin push en CI.
+- Security Gates (en PRs o manual): tfsec y Checkov (infra/), Trivy sobre imágenes :staging, ZAP Baseline (DAST) con port-forward al backend. Gates fallan si superan umbrales de severidad.
+- CD a Staging (main): build & push a docker.io/fercanap (o GHCR fallback), despliegue kustomize a ns=staging (EKS us-east-1), patch de imágenes :staging y smoke test /health.
+
+Entornos
+- Dev: port-forward y pruebas locales. Costos mínimos.
+- Staging: EKS fastticket-eks (ns=staging), 1 réplica, gp3 para Postgres, secrets/ConfigMaps, probes, RBAC. Servicios internos (ClusterIP) y, cuando se requiere validación pública, Services type LoadBalancer temporales.
+- Prod: promoción de tag aprobado, escalamiento, TLS/Ingress.
+
+Validaciones y acceso público (opcional)
+1) Prechequeos y exposición pública temporal:
+    - bash scripts/public_expose_prereqs.sh
+    - bash scripts/expose_public_lb.sh
+2) Validar endpoints públicos (usa IP si DNS no ha propagado):
+    - bash scripts/validate_public_access.sh
+3) Remover LoadBalancers para evitar costos:
+    - bash scripts/cleanup_public_lb.sh
+
+Seguridad y hardening
+- OIDC GitHub→AWS (sin llaves). Imágenes con tags inmutables :staging.
+- RBAC por namespace, secrets Kubernetes, recursos/limits y readiness/liveness.
+- Escaneo SAST (CodeQL), SCA (pip-audit/npm audit), contenedores (Trivy), Dockerfiles (Hadolint), IaC (tfsec/Checkov) y DAST (ZAP Baseline) en staging vía port-forward.
+
+Apagar y auditar costos en AWS
+- Auditar recursos y estimación de costos: 
+   - bash scripts/audit_and_shutdown_aws.sh --audit
+- Apagar (escalado a 0, eliminar LB, borrar nodegroups/cluster con confirmación):
+   - bash scripts/audit_and_shutdown_aws.sh --shutdown
+- Destruir toda la infraestructura de Terraform:
+   - bash scripts/audit_and_shutdown_aws.sh --destroy-terraform
+
+Documentación del entregable
+- Versión Markdown: docs/entregable2.md
+- Documento final (DOCX): docs/2.Entregable CI_CD testing pipeline.docx
+
 # FastTicket DevSecOps Case Study
 
 FastTicket is a small full-stack application (FastAPI backend, React frontend, PostgreSQL) deployed on AWS EKS with a secure, low-cost, and automated DevSecOps pipeline.
@@ -23,6 +65,14 @@ This repository includes:
    - Consolidated validation, report generation, cleanup helpers
 
 Each stage is backed by scripts in `scripts/` and workflows in `.github/workflows/`.
+
+## CI/CD pipeline summary
+
+The pipeline uses GitHub Actions with OIDC to AWS:
+- CI: unit tests (Python/Node), SCA (pip-audit, npm audit), and container build + Trivy image scans.
+- Security Gates: SAST (CodeQL), SCA, Container, IaC (tfsec/Checkov), and DAST (OWASP ZAP Baseline via port-forward to backend).
+- CD (staging): build and push images to docker.io/fercanap (or GHCR fallback), apply `k8s/overlays/staging`, patch images to `:staging`, rollout and smoke test `/health`.
+- Deploy to prod is modeled as a manual approval after all gates PASS.
 
 ## Cost Control and Shutdown
 
@@ -89,6 +139,26 @@ Notes:
 - Cost: `scripts/audit_and_shutdown_aws.sh` (uses `scripts/_cost_helpers.sh`)
 
 Artifacts are written to `validation_output/` and human logs to `logs/`.
+
+## Public exposure validation (optional)
+
+To briefly expose the app over the internet for demonstrations, we provide two Services of type LoadBalancer and validation helpers.
+
+```bash
+# Check prerequisites and warn about ELB costs
+bash scripts/public_expose_prereqs.sh
+
+# Create public LoadBalancers and wait for endpoints
+bash scripts/expose_public_lb.sh
+
+# Validate backend /health and frontend / over public IP/hostname
+bash scripts/validate_public_access.sh
+
+# Cleanup to stop ELB costs
+bash scripts/cleanup_public_lb.sh
+```
+
+Note: Keep LoadBalancers only as long as needed; they incur hourly charges.
 
 ## One-command deployment from scratch
 
