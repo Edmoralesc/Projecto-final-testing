@@ -90,6 +90,32 @@ Notes:
 
 Artifacts are written to `validation_output/` and human logs to `logs/`.
 
+## One-command deployment from scratch
+
+Use the following script to provision the AWS infrastructure (Terraform), wait until EKS and nodes are ready, deploy the Kubernetes workloads to the `staging` namespace, and validate with the existing Stage scripts. It adds sensible waits between steps.
+
+Quick usage:
+
+```bash
+scripts/deploy_from_scratch.sh
+```
+
+What it does:
+- Runs Stage 1 prereq validation and Terraform apply for VPC/EKS/node group
+- Waits for the EKS cluster to become ACTIVE and for nodes to be Ready
+- Updates kubeconfig for the cluster
+- Applies `k8s/overlays/staging` and waits for Postgres, Backend, and Frontend to roll out
+- Reuses Stage 2 validators to confirm service health/connectivity
+- Writes logs to `logs/deploy_<timestamp>.log` and a summary to `validation_output/deploy/<timestamp>/summary.json`
+
+Prerequisites:
+- AWS credentials configured for us-east-1
+- Tools: aws, kubectl, terraform, jq
+
+Notes:
+- The script is idempotent with Terraform; repeated runs will converge infra to declared state.
+- For complete teardown, see the Cost Control section above.
+
 ## Troubleshooting
 
 - If GitHub OIDC deploys fail, verify the trust condition in `infra/iam_github_oidc.tf` matches `github_org_repo` in `terraform.tfvars`.
