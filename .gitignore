@@ -1,16 +1,18 @@
-# Terraform
-*.tfstate
-*.tfstate.*
-.terraform/
-.terraform.lock.hcl
-crash.log
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
-
-# Local configs
+# Node / Frontend
+node_modules/
+dist/
+build/
 *.log
-*.bak
+
+# macOS / IDE
 .DS_Store
 .vscode/
+
+# Terraform
+infra/.terraform/
+infra/.terraform.lock.hcl
+infra/*.tfstate
+infra/*.tfstate.*
+
+# Python validator outputs
+validation_output/
