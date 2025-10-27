@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "docs": [
+    {
+      "id": "requirements",
+      "path": ".ai_context/requirements.md",
+      "topic": "case-brief",
+      "priority": 1,
+      "summary": "Requisitos FastTicket, criterios de evaluación, objetivos de velocidad y seguridad."
+    },
+    {
+      "id": "pipeline",
+      "path": ".ai_context/pipeline.md",
+      "topic": "devsecops-pipeline",
+      "priority": 2,
+      "summary": "7 stages con herramientas y Gates; validaciones por etapa y umbrales."
+    },
+    {
+      "id": "security",
+      "path": ".ai_context/security.md",
+      "topic": "security-controls",
+      "priority": 3,
+      "summary": "Políticas Shift-Left, DAST, hardening (OPA/Conftest), SCA/SAST/Secrets."
+    },
+    {
+      "id": "architecture",
+      "path": ".ai_context/architecture.md",
+      "topic": "system-architecture",
+      "priority": 4,
+      "summary": "Stack técnico: React/Node/Python, EKS Spot, PostgreSQL en StatefulSet, Terraform, Actions."
+    }
+  ]
+}
+
