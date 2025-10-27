@@ -63,7 +63,7 @@ jobs:
       - name: Run tests
         run: pytest --maxfail=1 --disable-warnings -q 
 
-      #automated script to harden image 
+      #automated script to check harden image 
       - name: Lint Dockerfile
         uses: hadolint/hadolint-action@v2.0.0
         with:
