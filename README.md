@@ -191,3 +191,38 @@ Notes:
 - If GitHub OIDC deploys fail, verify the trust condition in `infra/iam_github_oidc.tf` matches `github_org_repo` in `terraform.tfvars`.
 - For Kubernetes API access, ensure your IAM identity has admin access via `access_entries` in `infra/eks.tf`.
 - For EBS CSI driver, ensure the addon is installed with proper IRSA.
+
+### Acceso público: ejemplo validado
+
+Salida real del script de validación para acceso por Internet:
+
+```bash
+scripts/validate_public_access.sh
+Waiting for DNS to resolve...
+Testing Backend: http://54.81.153.212/health
+Backend HTTP: 200
+Testing Frontend: http://34.196.33.223/
+Frontend HTTP: 200
+[OK] Public access validated.
+```
+
+Si el DNS aún no propaga, el script usa automáticamente la IP pública del LoadBalancer.
+
+## Resumen final (extracto de `reports/final_report.md`)
+
+- Infraestructura (Stage 1)
+   - Cluster: `fastticket-eks` (AWS us-east-1)
+   - Namespace: `staging`
+- Despliegue (Stage 2)
+   - Workloads en `Running`: backend, frontend y postgres
+   - Exposición pública opcional: `backend-public` y `frontend-public` (LoadBalancer)
+- CI/CD (Stage 3)
+   - Workflows: `ci.yml`, `cd-staging.yml` (últimos runs exitosos; ver GitHub Actions)
+- Security Gates (Stage 4)
+   - SAST (CodeQL), SCA (pip-audit/npm audit), Contenedores (Trivy), IaC (tfsec/Checkov), DAST (ZAP Baseline vía port-forward)
+   - Artifacts y resúmenes en `reports/`
+- Costos/Optimización
+   - Evitar mantener LoadBalancers activos innecesariamente
+   - Imágenes más pequeñas y caching para acelerar builds
+
+Para el detalle completo consulte `reports/final_report.md`.
