@@ -18,6 +18,10 @@ app = FastAPI()
 def ping():
     return {"status": "ok"}
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 @app.post("/api/echo")
 def echo(msg: Message):
     return {"echo": msg.message}

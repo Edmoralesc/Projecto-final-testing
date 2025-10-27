@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    app.kubernetes.io/name: fastticket-frontend
+    app.kubernetes.io/part-of: fastticket
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: fastticket-frontend
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 80

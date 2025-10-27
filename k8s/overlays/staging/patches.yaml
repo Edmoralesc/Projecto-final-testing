@@ -1,0 +1,54 @@
+# Patches for staging overlay (replicas, labels)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        env: staging
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        env: staging
+# Kustomize strategic merge patches for staging
+# - Pin replica counts where needed
+# - Set resource constraints if overriding
+# - Customize environment for staging
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: backend
+          env:
+            - name: ENV
+              value: staging
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: frontend
+          env:
+            - name: ENV
+              value: staging

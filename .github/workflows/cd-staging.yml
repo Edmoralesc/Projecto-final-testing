@@ -1,0 +1,123 @@
+name: CD - Staging
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: true
+
+env:
+  AWS_REGION: us-east-1
+  CLUSTER_NAME: fastticket-eks
+  NAMESPACE: staging
+  DOCKERHUB_REPO_BACKEND: docker.io/fercanap/fastticket-backend
+  DOCKERHUB_REPO_FRONTEND: docker.io/fercanap/fastticket-frontend
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./api
+          file: ./api/Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_REPO_BACKEND }}:${{ github.sha }}
+            ${{ env.DOCKERHUB_REPO_BACKEND }}:staging
+          platforms: linux/amd64
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKERHUB_REPO_FRONTEND }}:${{ github.sha }}
+            ${{ env.DOCKERHUB_REPO_FRONTEND }}:staging
+          platforms: linux/amd64
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --name "$CLUSTER_NAME" --region "$AWS_REGION"
+
+      - name: Deploy kustomize overlay (staging)
+        run: |
+          kubectl apply -k k8s/overlays/staging
+
+      - name: Patch deployment images to :staging
+        run: |
+          kubectl -n "$NAMESPACE" set image deployment/backend backend=${{ env.DOCKERHUB_REPO_BACKEND }}:staging
+          kubectl -n "$NAMESPACE" set image deployment/frontend frontend=${{ env.DOCKERHUB_REPO_FRONTEND }}:staging
+
+      - name: Wait for rollout
+        run: |
+          kubectl -n "$NAMESPACE" rollout status deployment/backend --timeout=120s
+          kubectl -n "$NAMESPACE" rollout status deployment/frontend --timeout=120s
+          kubectl -n "$NAMESPACE" rollout status statefulset/postgres --timeout=180s
+
+      - name: Smoke test backend /health
+        run: |
+          set -euo pipefail
+          kubectl -n "$NAMESPACE" get pods
+          # Port-forward in background
+          kubectl -n "$NAMESPACE" port-forward deploy/backend 18080:8000 >/tmp/pf.log 2>&1 &
+          PF_PID=$!
+          sleep 3
+          for i in {1..10}; do
+            CODE=$(curl -sS -o /dev/null -w "%{http_code}" http://127.0.0.1:18080/health || true)
+            echo "Attempt $i: status=$CODE"
+            if [ "$CODE" = "200" ]; then
+              break
+            fi
+            sleep 3
+          done
+          kill $PF_PID || true
+          if [ "$CODE" != "200" ]; then
+            echo "Health check failed with $CODE" >&2
+            exit 1
+          fi
+
+      - name: Collect logs (artifact)
+        if: ${{ always() }}
+        run: |
+          mkdir -p logs
+          kubectl -n "$NAMESPACE" get pods -o wide > logs/stage3_pods.log || true
+          kubectl -n "$NAMESPACE" describe pods > logs/stage3_describe.log || true
+          kubectl -n "$NAMESPACE" logs --all-containers=true --prefix=true > logs/stage3_logs.log || true
+          kubectl -n "$NAMESPACE" get events --sort-by=.lastTimestamp > logs/stage3_events.log || true
+
+      - name: Upload logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-deploy-logs
+          path: logs/
+          retention-days: 5
