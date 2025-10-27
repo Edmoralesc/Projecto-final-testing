@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: fastticket-frontend
     app.kubernetes.io/part-of: fastticket
 spec:
-  replicas: 1
+  replicas: 1 # Keep minimal; increases pod count and node pressure
   selector:
     matchLabels:
       app.kubernetes.io/name: fastticket-frontend
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: fastticket-frontend:latest
+          image: fastticket-frontend:latest # Overridden by overlays to docker hub pinned tag
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
@@ -44,4 +44,4 @@ spec:
               memory: 64Mi
             limits:
               cpu: 250m
-              memory: 256Mi
+              memory: 256Mi # Right-size to avoid oversizing nodes

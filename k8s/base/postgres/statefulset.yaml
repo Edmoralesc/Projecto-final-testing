@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/part-of: fastticket
 spec:
   serviceName: postgres
-  replicas: 1
+  replicas: 1 # One pod; increasing replicas requires careful leader/failover setup
   selector:
     matchLabels:
       app.kubernetes.io/name: fastticket-postgres
@@ -40,7 +40,7 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
-          resources:
+          resources: # Right-size to control node requirements and costs
             requests:
               cpu: 100m
               memory: 256Mi
@@ -60,4 +60,4 @@ spec:
         storageClassName: gp3
         resources:
           requests:
-            storage: 2Gi
+            storage: 2Gi # PVC size impacts EBS monthly storage cost; retained by default on shutdown

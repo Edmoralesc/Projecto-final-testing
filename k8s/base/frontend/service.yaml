@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: fastticket-frontend
     app.kubernetes.io/part-of: fastticket
 spec:
-  type: ClusterIP
+  type: ClusterIP # Use Ingress or port-forwarding during dev to avoid ELB cost
   selector:
     app.kubernetes.io/name: fastticket-frontend
   ports:

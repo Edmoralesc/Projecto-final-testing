@@ -1,3 +1,5 @@
+## Minimal VPC with public subnets for EKS (simpler, but public worker nodes)
+## Cost notes: VPC itself is free; public subnets avoid NAT Gateway charges but expose nodes.
 resource "aws_vpc" "this" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
@@ -22,6 +24,7 @@ locals {
   }
 }
 
+## Public subnets in two AZs required by EKS control plane
 resource "aws_subnet" "public" {
   for_each = toset(var.azs)
   vpc_id   = aws_vpc.this.id
