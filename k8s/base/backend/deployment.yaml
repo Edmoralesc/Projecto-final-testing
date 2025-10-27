@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: fastticket-backend
     app.kubernetes.io/part-of: fastticket
 spec:
-  replicas: 1
+  replicas: 1 # Keep small for cost; scale via HPA in production
   selector:
     matchLabels:
       app.kubernetes.io/name: fastticket-backend
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: fastticket-backend:latest
+          image: fastticket-backend:latest # Overridden by overlays to a pinned tag
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -67,4 +67,4 @@ spec:
               memory: 128Mi
             limits:
               cpu: 500m
-              memory: 512Mi
+              memory: 512Mi # Set requests/limits to avoid noisy-neighbor and control cluster sizing

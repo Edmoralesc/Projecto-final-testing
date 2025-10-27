@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: fastticket-postgres
     app.kubernetes.io/part-of: fastticket
 spec:
-  type: ClusterIP
+  type: ClusterIP # Internal DB only; LoadBalancer here would add ELB costs and expose data
   selector:
     app.kubernetes.io/name: fastticket-postgres
   ports:
