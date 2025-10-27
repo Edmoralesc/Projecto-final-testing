@@ -25,6 +25,10 @@ AUDIT_JSON="$OUT_DIR/audit.json"
 # shellcheck source=scripts/_cost_helpers.sh
 . "scripts/_cost_helpers.sh"
 
+# Ensure log file exists early and rotate older cost audit logs (keep last 3)
+touch "$HUMAN_LOG"
+rotate_logs_keep "$LOG_DIR" "cost_audit_*.log" 3
+
 # Preflight checks
 precheck() {
   local ok=true
@@ -321,5 +325,8 @@ case "$MODE" in
 ok "Summary: $SUMMARY_JSON"
 # Also duplicate to audit.json on audit mode for convenience
 if [ "$MODE" = audit ]; then cp "$SUMMARY_JSON" "$AUDIT_JSON"; fi
+
+# Final rotation pass to ensure only 3 recent logs are kept
+rotate_logs_keep "$LOG_DIR" "cost_audit_*.log" 3
 
 exit 0

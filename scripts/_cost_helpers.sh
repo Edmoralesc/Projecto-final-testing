@@ -80,3 +80,12 @@ expected_hourly_cost_note() {
   local nodes="$1"
   awk -v n="$nodes" 'BEGIN{cp=0.10; node=0.06; total=cp + n*node; printf "~$%.2f/hour", total}'
 }
+
+# Keep only N most recent logs matching pattern in a directory (e.g., prefix_*.log)
+rotate_logs_keep() {
+  local dir="$1"; local pattern="$2"; local keep="${3:-3}"
+  # List newest first, delete anything beyond $keep
+  ls -1t "$dir"/$pattern 2>/dev/null | awk -v k="$keep" 'NR>k' | while read -r f; do
+    [ -n "$f" ] && rm -f "$f" || true
+  done || true
+}

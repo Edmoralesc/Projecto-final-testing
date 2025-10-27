@@ -18,6 +18,14 @@ SUMMARY_JSON="$OUT_DIR/summary.json"
 log() { echo "[$(date -Iseconds)] $*" | tee -a "$LOG_FILE"; }
 err() { echo "[$(date -Iseconds)] [ERROR] $*" | tee -a "$LOG_FILE" >&2; }
 
+# Keep only N most recent logs matching a simple prefix pattern
+rotate_logs_keep() {
+  local dir="$1"; local pattern="$2"; local keep="${3:-3}"
+  ls -1t "$dir"/$pattern 2>/dev/null | awk -v k="$keep" 'NR>k' | while read -r f; do
+    [ -n "$f" ] && rm -f "$f" || true
+  done || true
+}
+
 precheck() {
   local ok=true
   for tool in aws jq kubectl terraform; do
@@ -32,6 +40,9 @@ precheck() {
 
 wait_for_cluster_active() {
   local timeout=${1:-900} # 15 minutes
+touch "$LOG_FILE"
+# Rotate older deploy logs (keep last 3)
+rotate_logs_keep "$LOG_DIR" "deploy_*.log" 3
   local start=$(date +%s)
   log "Waiting for EKS cluster $CLUSTER_NAME to be ACTIVE (timeout ${timeout}s)"
   while true; do
