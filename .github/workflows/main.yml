@@ -26,10 +26,17 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          # Fail the job if vulnerabilities of severity medium or higher are detected
-          fail-on: medium
+          upload: true        # Upload results to GitHub Security tab
+          output: results.sarif  # Save SARIF locally
 
-
+      - name: Fail if CodeQL finds issues
+        run: |
+          if grep -q '"severity":' results.sarif; then
+            echo "CodeQL detected issues. Failing the job."
+            exit 1
+          else
+            echo "No issues found."
+          fi
 
   backend-api:
     runs-on: ubuntu-latest
@@ -56,7 +63,11 @@ jobs:
       - name: Run tests
         run: pytest --maxfail=1 --disable-warnings -q 
 
-
+      #automated script to harden image 
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v2.0.0
+        with:
+          dockerfile: ./api/Dockerfile
 
 
       #create docker image
@@ -115,6 +126,12 @@ jobs:
           flags: frontend
           name: frontend-coverage
         continue-on-error: true
+
+      #automated script to harden image 
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v2.0.0
+        with:
+          dockerfile: ./frontend/Dockerfile
 
       - name: Build Docker image
         run: docker build -t emoralesc/frontend:latest -f frontend/Dockerfile frontend/
