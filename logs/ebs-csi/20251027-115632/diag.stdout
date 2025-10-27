@@ -1,0 +1,340 @@
+[2025-10-27T11:56:32-0600] Collecting OIDC issuer for cluster fastticket-eks in us-east-1
+[2025-10-27T11:56:33-0600] Listing IAM OIDC providers
+[2025-10-27T11:56:34-0600] Describing EBS CSI addon
+[2025-10-27T11:56:35-0600] Getting ebs-csi resources in kube-system
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE     CONTAINERS                                                                           IMAGES                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                SELECTOR
+deployment.apps/ebs-csi-controller   2/2     2            2           3h24m   ebs-plugin,csi-provisioner,csi-attacher,csi-snapshotter,csi-resizer,liveness-probe   602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-ebs-csi-driver:v1.51.1,602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-provisioner:v5.3.0-eksbuild.4,602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-attacher:v4.9.0-eksbuild.4,602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-snapshotter:v8.3.0-eksbuild.2,602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-resizer:v1.14.0-eksbuild.4,602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/livenessprobe:v2.16.0-eksbuild.5   app=ebs-csi-controller,app.kubernetes.io/name=aws-ebs-csi-driver
+
+NAME                                  DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR              AGE     CONTAINERS                                        IMAGES                                                                                                                                                                                                                                                        SELECTOR
+daemonset.apps/ebs-csi-node           1         1         1       1            1           kubernetes.io/os=linux     3h24m   ebs-plugin,node-driver-registrar,liveness-probe   602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-ebs-csi-driver:v1.51.1,602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-node-driver-registrar:v2.14.0-eksbuild.5,602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/livenessprobe:v2.16.0-eksbuild.5   app=ebs-csi-node,app.kubernetes.io/name=aws-ebs-csi-driver
+daemonset.apps/ebs-csi-node-windows   0         0         0       0            0           kubernetes.io/os=windows   3h24m   ebs-plugin,node-driver-registrar,liveness-probe   602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-ebs-csi-driver:v1.51.1,602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-node-driver-registrar:v2.14.0-eksbuild.5,602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/livenessprobe:v2.16.0-eksbuild.5   app=ebs-csi-node,app.kubernetes.io/name=aws-ebs-csi-driver
+
+NAME                                      READY   STATUS    RESTARTS   AGE     IP            NODE                         NOMINATED NODE   READINESS GATES
+pod/ebs-csi-controller-856bf68dd6-8f42h   6/6     Running   0          33s     10.0.51.144   ip-10-0-51-38.ec2.internal   <none>           <none>
+pod/ebs-csi-controller-856bf68dd6-rlll2   6/6     Running   0          33s     10.0.61.51    ip-10-0-51-38.ec2.internal   <none>           <none>
+pod/ebs-csi-node-bq68v                    3/3     Running   0          3h24m   10.0.49.4     ip-10-0-51-38.ec2.internal   <none>           <none>
+[2025-10-27T11:56:36-0600] Describe ebs-csi-controller deploy
+Name:                   ebs-csi-controller
+Namespace:              kube-system
+CreationTimestamp:      Mon, 27 Oct 2025 08:32:13 -0600
+Labels:                 app.kubernetes.io/component=csi-driver
+                        app.kubernetes.io/managed-by=EKS
+                        app.kubernetes.io/name=aws-ebs-csi-driver
+                        app.kubernetes.io/version=1.51.1
+Annotations:            deployment.kubernetes.io/revision: 2
+Selector:               app=ebs-csi-controller,app.kubernetes.io/name=aws-ebs-csi-driver
+Replicas:               2 desired | 2 updated | 2 total | 2 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  1 max unavailable, 25% max surge
+Pod Template:
+  Labels:           app=ebs-csi-controller
+                    app.kubernetes.io/component=csi-driver
+                    app.kubernetes.io/managed-by=EKS
+                    app.kubernetes.io/name=aws-ebs-csi-driver
+                    app.kubernetes.io/version=1.51.1
+  Annotations:      kubectl.kubernetes.io/restartedAt: 2025-10-27T11:56:02-06:00
+  Service Account:  ebs-csi-controller-sa
+  Containers:
+   ebs-plugin:
+    Image:           602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-ebs-csi-driver:v1.51.1
+    Port:            9808/TCP (healthz)
+    Host Port:       0/TCP (healthz)
+    SeccompProfile:  RuntimeDefault
+    Args:
+      controller
+      --endpoint=$(CSI_ENDPOINT)
+      --k8s-tag-cluster-id=fastticket-eks
+      --batching=true
+      --logging-format=text
+      --user-agent-extra=eks
+      --v=2
+    Limits:
+      memory:  256Mi
+    Requests:
+      cpu:      10m
+      memory:   40Mi
+    Liveness:   http-get http://:healthz/healthz delay=10s timeout=60s period=10s #success=1 #failure=10
+    Readiness:  http-get http://:healthz/healthz delay=10s timeout=60s period=10s #success=1 #failure=5
+    Environment:
+      CSI_ENDPOINT:            unix:///var/lib/csi/sockets/pluginproxy/csi.sock
+      CSI_NODE_NAME:            (v1:spec.nodeName)
+      AWS_ACCESS_KEY_ID:       <set to the key 'key_id' in secret 'aws-secret'>                Optional: true
+      AWS_SECRET_ACCESS_KEY:   <set to the key 'access_key' in secret 'aws-secret'>            Optional: true
+      AWS_EC2_ENDPOINT:        <set to the key 'endpoint' of config map 'aws-meta'>            Optional: true
+      AWS_SAGEMAKER_ENDPOINT:  <set to the key 'sagemaker_endpoint' of config map 'aws-meta'>  Optional: true
+      AWS_REGION:              us-east-1
+    Mounts:
+      /var/lib/csi/sockets/pluginproxy/ from socket-dir (rw)
+   csi-provisioner:
+    Image:           602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-provisioner:v5.3.0-eksbuild.4
+    Port:            <none>
+    Host Port:       <none>
+    SeccompProfile:  RuntimeDefault
+    Args:
+      --timeout=60s
+      --csi-address=$(ADDRESS)
+      --v=2
+      --feature-gates=Topology=true
+      --extra-create-metadata
+      --leader-election=true
+      --default-fstype=ext4
+      --kube-api-qps=20
+      --kube-api-burst=100
+      --worker-threads=100
+      --retry-interval-max=30m
+    Limits:
+      memory:  256Mi
+    Requests:
+      cpu:     10m
+      memory:  40Mi
+    Environment:
+      ADDRESS:  /var/lib/csi/sockets/pluginproxy/csi.sock
+    Mounts:
+      /var/lib/csi/sockets/pluginproxy/ from socket-dir (rw)
+   csi-attacher:
+    Image:           602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-attacher:v4.9.0-eksbuild.4
+    Port:            <none>
+    Host Port:       <none>
+    SeccompProfile:  RuntimeDefault
+    Args:
+      --timeout=6m
+      --csi-address=$(ADDRESS)
+      --v=2
+      --leader-election=true
+      --kube-api-qps=20
+      --kube-api-burst=100
+      --worker-threads=100
+      --retry-interval-max=5m
+    Limits:
+      memory:  256Mi
+    Requests:
+      cpu:     10m
+      memory:  40Mi
+    Environment:
+      ADDRESS:  /var/lib/csi/sockets/pluginproxy/csi.sock
+    Mounts:
+      /var/lib/csi/sockets/pluginproxy/ from socket-dir (rw)
+   csi-snapshotter:
+    Image:           602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-snapshotter:v8.3.0-eksbuild.2
+    Port:            <none>
+    Host Port:       <none>
+    SeccompProfile:  RuntimeDefault
+    Args:
+      --csi-address=$(ADDRESS)
+      --leader-election=true
+      --v=2
+      --extra-create-metadata
+      --kube-api-qps=20
+      --kube-api-burst=100
+      --worker-threads=100
+      --retry-interval-max=30m
+    Limits:
+      memory:  256Mi
+    Requests:
+      cpu:     10m
+      memory:  40Mi
+    Environment:
+      ADDRESS:  /var/lib/csi/sockets/pluginproxy/csi.sock
+    Mounts:
+      /var/lib/csi/sockets/pluginproxy/ from socket-dir (rw)
+   csi-resizer:
+    Image:           602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-resizer:v1.14.0-eksbuild.4
+    Port:            <none>
+    Host Port:       <none>
+    SeccompProfile:  RuntimeDefault
+    Args:
+      --timeout=60s
+      --extra-modify-metadata
+      --csi-address=$(ADDRESS)
+      --v=2
+      --handle-volume-inuse-error=false
+      --leader-election=true
+      --kube-api-qps=20
+      --kube-api-burst=100
+      --workers=100
+      --retry-interval-max=30m
+    Limits:
+      memory:  256Mi
+    Requests:
+      cpu:     10m
+      memory:  40Mi
+    Environment:
+      ADDRESS:  /var/lib/csi/sockets/pluginproxy/csi.sock
+    Mounts:
+      /var/lib/csi/sockets/pluginproxy/ from socket-dir (rw)
+   liveness-probe:
+    Image:      602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/livenessprobe:v2.16.0-eksbuild.5
+    Port:       <none>
+    Host Port:  <none>
+    Args:
+      --csi-address=/csi/csi.sock
+      --probe-timeout=60s
+    Limits:
+      memory:  256Mi
+    Requests:
+      cpu:        10m
+      memory:     40Mi
+    Environment:  <none>
+    Mounts:
+      /csi from socket-dir (rw)
+  Volumes:
+   socket-dir:
+    Type:               EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:             
+    SizeLimit:          <unset>
+  Priority Class Name:  system-cluster-critical
+  Node-Selectors:       kubernetes.io/os=linux
+  Tolerations:          :NoExecute op=Exists for 300s
+                        CriticalAddonsOnly op=Exists
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  ebs-csi-controller-cbd467c5b (0/0 replicas created)
+NewReplicaSet:   ebs-csi-controller-856bf68dd6 (2/2 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  34s   deployment-controller  Scaled up replica set ebs-csi-controller-856bf68dd6 to 1
+  Normal  ScalingReplicaSet  34s   deployment-controller  Scaled down replica set ebs-csi-controller-cbd467c5b to 1 from 2
+  Normal  ScalingReplicaSet  34s   deployment-controller  Scaled up replica set ebs-csi-controller-856bf68dd6 to 2 from 1
+  Normal  ScalingReplicaSet  23s   deployment-controller  Scaled down replica set ebs-csi-controller-cbd467c5b to 0 from 1
+[2025-10-27T11:56:37-0600] Logs from ebs-csi-controller (all containers, last 300 lines)
+Found 2 pods, using pod/ebs-csi-controller-856bf68dd6-rlll2
+W1027 17:56:04.928523       1 feature_gate.go:352] Setting GA feature gate Topology=true. It will be removed in a future release.
+I1027 17:56:04.928643       1 feature_gate.go:385] feature gates: {map[Topology:true]}
+I1027 17:56:04.928665       1 csi-provisioner.go:168] "Version" version="v5.3.0-eksbuild.4"
+I1027 17:56:04.928673       1 csi-provisioner.go:191] Building kube configs for running in cluster...
+I1027 17:56:04.928927       1 envvar.go:172] "Feature gate default state" feature="ClientsPreferCBOR" enabled=false
+I1027 17:56:04.928947       1 envvar.go:172] "Feature gate default state" feature="InformerResourceVersion" enabled=false
+I1027 17:56:04.928953       1 envvar.go:172] "Feature gate default state" feature="InOrderInformers" enabled=true
+I1027 17:56:04.928956       1 envvar.go:172] "Feature gate default state" feature="WatchListClient" enabled=false
+I1027 17:56:04.928967       1 envvar.go:172] "Feature gate default state" feature="ClientsAllowCBOR" enabled=false
+I1027 17:56:04.937225       1 common.go:143] "Probing CSI driver for readiness"
+I1027 17:56:05.129575       1 csi-provisioner.go:246] Detected CSI driver ebs.csi.aws.com
+I1027 17:56:05.129609       1 csi-provisioner.go:256] Supports migration from in-tree plugin: kubernetes.io/aws-ebs
+I1027 17:56:05.131522       1 common.go:143] "Probing CSI driver for readiness"
+I1027 17:56:05.135939       1 csi-provisioner.go:315] CSI driver supports PUBLISH_UNPUBLISH_VOLUME, watching VolumeAttachments
+I1027 17:56:05.140317       1 controller.go:758] "Using saving PVs to API server in background"
+I1027 17:56:05.144527       1 leaderelection.go:257] attempting to acquire leader lease kube-system/ebs-csi-aws-com...
+I1027 17:56:05.156867       1 main.go:115] "Version" version="v4.9.0-eksbuild.4"
+I1027 17:56:05.158370       1 envvar.go:172] "Feature gate default state" feature="ClientsPreferCBOR" enabled=false
+I1027 17:56:05.158399       1 envvar.go:172] "Feature gate default state" feature="InformerResourceVersion" enabled=false
+I1027 17:56:05.158405       1 envvar.go:172] "Feature gate default state" feature="InOrderInformers" enabled=true
+I1027 17:56:05.158411       1 envvar.go:172] "Feature gate default state" feature="WatchListClient" enabled=false
+I1027 17:56:05.158416       1 envvar.go:172] "Feature gate default state" feature="ClientsAllowCBOR" enabled=false
+I1027 17:56:05.160924       1 common.go:143] "Probing CSI driver for readiness"
+I1027 17:56:05.173199       1 main.go:176] "CSI driver name" driver="ebs.csi.aws.com"
+I1027 17:56:05.175464       1 common.go:143] "Probing CSI driver for readiness"
+I1027 17:56:05.180467       1 main.go:260] "CSI driver supports ControllerPublishUnpublish, using real CSI handler" driver="ebs.csi.aws.com"
+I1027 17:56:05.181136       1 leaderelection.go:257] attempting to acquire leader lease kube-system/external-attacher-leader-ebs-csi-aws-com...
+I1027 17:56:05.405327       1 feature_gate.go:385] feature gates: {map[]}
+I1027 17:56:05.405487       1 main.go:134] "Version" version="v8.3.0-eksbuild.2"
+I1027 17:56:05.405733       1 envvar.go:172] "Feature gate default state" feature="WatchListClient" enabled=false
+I1027 17:56:05.405755       1 envvar.go:172] "Feature gate default state" feature="ClientsAllowCBOR" enabled=false
+I1027 17:56:05.405828       1 envvar.go:172] "Feature gate default state" feature="ClientsPreferCBOR" enabled=false
+I1027 17:56:05.405871       1 envvar.go:172] "Feature gate default state" feature="InformerResourceVersion" enabled=false
+I1027 17:56:05.405879       1 envvar.go:172] "Feature gate default state" feature="InOrderInformers" enabled=true
+I1027 17:56:05.410040       1 main.go:218] CSI driver name: "ebs.csi.aws.com"
+I1027 17:56:05.410067       1 common.go:143] "Probing CSI driver for readiness"
+I1027 17:56:05.413253       1 main.go:262] Start NewCSISnapshotSideCarController with snapshotter [ebs.csi.aws.com] kubeconfig [] csiTimeout [1m0s] csiAddress [/var/lib/csi/sockets/pluginproxy/csi.sock] resyncPeriod [15m0s] snapshotNamePrefix [snapshot] snapshotNameUUIDLength [824633788344]
+I1027 17:56:05.413773       1 leaderelection.go:257] attempting to acquire leader lease kube-system/external-snapshotter-leader-ebs-csi-aws-com...
+I1027 17:56:05.641515       1 main.go:116] "Version" version="v1.14.0-eksbuild.4"
+I1027 17:56:05.641712       1 feature_gate.go:385] feature gates: {map[]}
+I1027 17:56:05.641947       1 envvar.go:172] "Feature gate default state" feature="ClientsPreferCBOR" enabled=false
+I1027 17:56:05.642000       1 envvar.go:172] "Feature gate default state" feature="InformerResourceVersion" enabled=false
+I1027 17:56:05.642023       1 envvar.go:172] "Feature gate default state" feature="InOrderInformers" enabled=true
+I1027 17:56:05.642261       1 envvar.go:172] "Feature gate default state" feature="WatchListClient" enabled=false
+I1027 17:56:05.642308       1 envvar.go:172] "Feature gate default state" feature="ClientsAllowCBOR" enabled=false
+I1027 17:56:05.643975       1 common.go:143] "Probing CSI driver for readiness"
+I1027 17:56:05.648215       1 main.go:171] "CSI driver name" driverName="ebs.csi.aws.com"
+I1027 17:56:05.649342       1 common.go:143] "Probing CSI driver for readiness"
+I1027 17:56:05.655680       1 leaderelection.go:257] attempting to acquire leader lease kube-system/external-resizer-ebs-csi-aws-com...
+I1027 17:56:05.759746       1 main.go:137] "Calling CSI driver to discover driver name"
+I1027 17:56:05.761340       1 main.go:145] "CSI driver name" driver="ebs.csi.aws.com"
+I1027 17:56:05.761373       1 main.go:174] "ServeMux listening" address="0.0.0.0:9808"
+I1027 17:56:04.746714       1 main.go:148] "Region provided via AWS_REGION environment variable" region="us-east-1"
+I1027 17:56:04.748463       1 envvar.go:172] "Feature gate default state" feature="ClientsAllowCBOR" enabled=false
+I1027 17:56:04.748501       1 envvar.go:172] "Feature gate default state" feature="ClientsPreferCBOR" enabled=false
+I1027 17:56:04.748535       1 envvar.go:172] "Feature gate default state" feature="InOrderInformers" enabled=true
+I1027 17:56:04.748542       1 envvar.go:172] "Feature gate default state" feature="InformerResourceVersion" enabled=false
+I1027 17:56:04.748549       1 envvar.go:172] "Feature gate default state" feature="WatchListClient" enabled=false
+I1027 17:56:04.749286       1 driver.go:72] "Driver Information" Driver="ebs.csi.aws.com" Version="v1.51.1"
+[2025-10-27T11:56:39-0600] Events mentioning EBS
+36s         Normal    Scheduled           pod/ebs-csi-controller-856bf68dd6-8f42h             Successfully assigned kube-system/ebs-csi-controller-856bf68dd6-8f42h to ip-10-0-51-38.ec2.internal
+36s         Normal    Scheduled           pod/ebs-csi-controller-856bf68dd6-rlll2             Successfully assigned kube-system/ebs-csi-controller-856bf68dd6-rlll2 to ip-10-0-51-38.ec2.internal
+59m         Warning   Unhealthy           pod/ebs-csi-controller-cbd467c5b-mfqb7              Readiness probe failed: HTTP probe failed with statuscode: 500
+49m         Warning   Unhealthy           pod/ebs-csi-controller-cbd467c5b-mfqb7              Liveness probe failed: HTTP probe failed with statuscode: 500
+34m         Normal    Pulled              pod/ebs-csi-controller-cbd467c5b-mfqb7              Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-ebs-csi-driver:v1.51.1" already present on machine
+14m         Warning   BackOff             pod/ebs-csi-controller-cbd467c5b-mfqb7              Back-off restarting failed container csi-provisioner in pod ebs-csi-controller-cbd467c5b-mfqb7_kube-system(4697bd8f-fb92-4584-a123-d44e72dc1e01)
+14m         Warning   Unhealthy           pod/ebs-csi-controller-cbd467c5b-s7n8d              Readiness probe failed: HTTP probe failed with statuscode: 500
+4m20s       Warning   BackOff             pod/ebs-csi-controller-cbd467c5b-mfqb7              Back-off restarting failed container ebs-plugin in pod ebs-csi-controller-cbd467c5b-mfqb7_kube-system(4697bd8f-fb92-4584-a123-d44e72dc1e01)
+4m16s       Warning   BackOff             pod/ebs-csi-controller-cbd467c5b-s7n8d              Back-off restarting failed container ebs-plugin in pod ebs-csi-controller-cbd467c5b-s7n8d_kube-system(2759c249-bb5d-4dab-83a1-d6c144d903eb)
+37s         Normal    SuccessfulDelete    replicaset/ebs-csi-controller-cbd467c5b             Deleted pod: ebs-csi-controller-cbd467c5b-s7n8d
+37s         Normal    ScalingReplicaSet   deployment/ebs-csi-controller                       Scaled up replica set ebs-csi-controller-856bf68dd6 to 1
+37s         Normal    ScalingReplicaSet   deployment/ebs-csi-controller                       Scaled down replica set ebs-csi-controller-cbd467c5b to 1 from 2
+37s         Normal    ScalingReplicaSet   deployment/ebs-csi-controller                       Scaled up replica set ebs-csi-controller-856bf68dd6 to 2 from 1
+37s         Normal    SuccessfulCreate    replicaset/ebs-csi-controller-856bf68dd6            Created pod: ebs-csi-controller-856bf68dd6-8f42h
+37s         Normal    SuccessfulCreate    replicaset/ebs-csi-controller-856bf68dd6            Created pod: ebs-csi-controller-856bf68dd6-rlll2
+36s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-rlll2             Created container: csi-attacher
+36s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-8f42h             Started container csi-provisioner
+36s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-8f42h             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-ebs-csi-driver:v1.51.1" already present on machine
+36s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-8f42h             Created container: ebs-plugin
+36s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-8f42h             Started container ebs-plugin
+36s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-8f42h             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-provisioner:v5.3.0-eksbuild.4" already present on machine
+36s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-rlll2             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-ebs-csi-driver:v1.51.1" already present on machine
+36s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-rlll2             Created container: ebs-plugin
+36s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-rlll2             Started container ebs-plugin
+36s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-rlll2             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-provisioner:v5.3.0-eksbuild.4" already present on machine
+36s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-rlll2             Created container: csi-provisioner
+36s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-rlll2             Started container csi-provisioner
+36s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-rlll2             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-attacher:v4.9.0-eksbuild.4" already present on machine
+36s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-8f42h             Created container: csi-provisioner
+36s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-8f42h             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-attacher:v4.9.0-eksbuild.4" already present on machine
+36s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-8f42h             Created container: csi-attacher
+36s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-8f42h             Started container csi-attacher
+36s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-8f42h             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-snapshotter:v8.3.0-eksbuild.2" already present on machine
+36s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-8f42h             Created container: csi-snapshotter
+35s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-rlll2             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-snapshotter:v8.3.0-eksbuild.2" already present on machine
+35s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-rlll2             Started container csi-snapshotter
+35s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-rlll2             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/livenessprobe:v2.16.0-eksbuild.5" already present on machine
+35s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-rlll2             Created container: liveness-probe
+35s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-rlll2             Started container liveness-probe
+35s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-8f42h             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-resizer:v1.14.0-eksbuild.4" already present on machine
+35s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-8f42h             Started container csi-snapshotter
+35s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-8f42h             Started container csi-resizer
+35s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-rlll2             Started container csi-attacher
+35s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-rlll2             Created container: csi-snapshotter
+35s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-rlll2             Started container csi-resizer
+35s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-rlll2             Created container: csi-resizer
+35s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-rlll2             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/csi-resizer:v1.14.0-eksbuild.4" already present on machine
+35s         Normal    LeaderElection      lease/ebs-csi-aws-com                               1761587764967-6433-ebs-csi-aws-com became leader
+35s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-8f42h             Created container: csi-resizer
+35s         Normal    LeaderElection      lease/external-snapshotter-leader-ebs-csi-aws-com   ebs-csi-controller-856bf68dd6-8f42h became leader
+35s         Normal    Started             pod/ebs-csi-controller-856bf68dd6-8f42h             Started container liveness-probe
+35s         Normal    Created             pod/ebs-csi-controller-856bf68dd6-8f42h             Created container: liveness-probe
+35s         Normal    Pulled              pod/ebs-csi-controller-856bf68dd6-8f42h             Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/livenessprobe:v2.16.0-eksbuild.5" already present on machine
+35s         Normal    LeaderElection      lease/external-resizer-ebs-csi-aws-com              ebs-csi-controller-856bf68dd6-8f42h became leader
+35s         Normal    LeaderElection      lease/external-attacher-leader-ebs-csi-aws-com      ebs-csi-controller-856bf68dd6-8f42h became leader
+26s         Normal    ScalingReplicaSet   deployment/ebs-csi-controller                       Scaled down replica set ebs-csi-controller-cbd467c5b to 0 from 1
+26s         Normal    SuccessfulDelete    replicaset/ebs-csi-controller-cbd467c5b             Deleted pod: ebs-csi-controller-cbd467c5b-mfqb7
+[2025-10-27T11:56:40-0600] ServiceAccount manifest
+apiVersion: v1
+automountServiceAccountToken: true
+kind: ServiceAccount
+metadata:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::665516437576:role/fastticket-ebs-csi-irsa
+  creationTimestamp: "2025-10-27T14:32:12Z"
+  labels:
+    app.kubernetes.io/component: csi-driver
+    app.kubernetes.io/managed-by: EKS
+    app.kubernetes.io/name: aws-ebs-csi-driver
+    app.kubernetes.io/version: 1.51.1
+  name: ebs-csi-controller-sa
+  namespace: kube-system
+  resourceVersion: "36673"
+  uid: 5c434520-0610-46e6-abdb-790af541cf34
+[2025-10-27T11:56:40-0600] Diagnosis saved under logs/ebs-csi/20251027-115632

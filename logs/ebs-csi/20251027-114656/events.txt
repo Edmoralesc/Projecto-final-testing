@@ -1,0 +1,8 @@
+54m         Warning   Unhealthy   pod/ebs-csi-controller-cbd467c5b-mfqb7   Readiness probe failed: Get "http://10.0.52.235:9808/healthz": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+49m         Warning   Unhealthy   pod/ebs-csi-controller-cbd467c5b-mfqb7   Readiness probe failed: HTTP probe failed with statuscode: 500
+39m         Warning   Unhealthy   pod/ebs-csi-controller-cbd467c5b-mfqb7   Liveness probe failed: HTTP probe failed with statuscode: 500
+24m         Normal    Pulled      pod/ebs-csi-controller-cbd467c5b-mfqb7   Container image "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-ebs-csi-driver:v1.51.1" already present on machine
+9m44s       Warning   BackOff     pod/ebs-csi-controller-cbd467c5b-s7n8d   Back-off restarting failed container ebs-plugin in pod ebs-csi-controller-cbd467c5b-s7n8d_kube-system(2759c249-bb5d-4dab-83a1-d6c144d903eb)
+9m39s       Warning   BackOff     pod/ebs-csi-controller-cbd467c5b-mfqb7   Back-off restarting failed container ebs-plugin in pod ebs-csi-controller-cbd467c5b-mfqb7_kube-system(4697bd8f-fb92-4584-a123-d44e72dc1e01)
+4m44s       Warning   BackOff     pod/ebs-csi-controller-cbd467c5b-mfqb7   Back-off restarting failed container csi-provisioner in pod ebs-csi-controller-cbd467c5b-mfqb7_kube-system(4697bd8f-fb92-4584-a123-d44e72dc1e01)
+4m43s       Warning   Unhealthy   pod/ebs-csi-controller-cbd467c5b-s7n8d   Readiness probe failed: HTTP probe failed with statuscode: 500

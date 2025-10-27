@@ -1,0 +1,59 @@
+W1027 17:56:04.928523       1 feature_gate.go:352] Setting GA feature gate Topology=true. It will be removed in a future release.
+I1027 17:56:04.928643       1 feature_gate.go:385] feature gates: {map[Topology:true]}
+I1027 17:56:04.928665       1 csi-provisioner.go:168] "Version" version="v5.3.0-eksbuild.4"
+I1027 17:56:04.928673       1 csi-provisioner.go:191] Building kube configs for running in cluster...
+I1027 17:56:04.928927       1 envvar.go:172] "Feature gate default state" feature="ClientsPreferCBOR" enabled=false
+I1027 17:56:04.928947       1 envvar.go:172] "Feature gate default state" feature="InformerResourceVersion" enabled=false
+I1027 17:56:04.928953       1 envvar.go:172] "Feature gate default state" feature="InOrderInformers" enabled=true
+I1027 17:56:04.928956       1 envvar.go:172] "Feature gate default state" feature="WatchListClient" enabled=false
+I1027 17:56:04.928967       1 envvar.go:172] "Feature gate default state" feature="ClientsAllowCBOR" enabled=false
+I1027 17:56:04.937225       1 common.go:143] "Probing CSI driver for readiness"
+I1027 17:56:05.129575       1 csi-provisioner.go:246] Detected CSI driver ebs.csi.aws.com
+I1027 17:56:05.129609       1 csi-provisioner.go:256] Supports migration from in-tree plugin: kubernetes.io/aws-ebs
+I1027 17:56:05.131522       1 common.go:143] "Probing CSI driver for readiness"
+I1027 17:56:05.135939       1 csi-provisioner.go:315] CSI driver supports PUBLISH_UNPUBLISH_VOLUME, watching VolumeAttachments
+I1027 17:56:05.140317       1 controller.go:758] "Using saving PVs to API server in background"
+I1027 17:56:05.144527       1 leaderelection.go:257] attempting to acquire leader lease kube-system/ebs-csi-aws-com...
+I1027 17:56:05.156867       1 main.go:115] "Version" version="v4.9.0-eksbuild.4"
+I1027 17:56:05.158370       1 envvar.go:172] "Feature gate default state" feature="ClientsPreferCBOR" enabled=false
+I1027 17:56:05.158399       1 envvar.go:172] "Feature gate default state" feature="InformerResourceVersion" enabled=false
+I1027 17:56:05.158405       1 envvar.go:172] "Feature gate default state" feature="InOrderInformers" enabled=true
+I1027 17:56:05.158411       1 envvar.go:172] "Feature gate default state" feature="WatchListClient" enabled=false
+I1027 17:56:05.158416       1 envvar.go:172] "Feature gate default state" feature="ClientsAllowCBOR" enabled=false
+I1027 17:56:05.160924       1 common.go:143] "Probing CSI driver for readiness"
+I1027 17:56:05.173199       1 main.go:176] "CSI driver name" driver="ebs.csi.aws.com"
+I1027 17:56:05.175464       1 common.go:143] "Probing CSI driver for readiness"
+I1027 17:56:05.180467       1 main.go:260] "CSI driver supports ControllerPublishUnpublish, using real CSI handler" driver="ebs.csi.aws.com"
+I1027 17:56:05.181136       1 leaderelection.go:257] attempting to acquire leader lease kube-system/external-attacher-leader-ebs-csi-aws-com...
+I1027 17:56:05.405327       1 feature_gate.go:385] feature gates: {map[]}
+I1027 17:56:05.405487       1 main.go:134] "Version" version="v8.3.0-eksbuild.2"
+I1027 17:56:05.405733       1 envvar.go:172] "Feature gate default state" feature="WatchListClient" enabled=false
+I1027 17:56:05.405755       1 envvar.go:172] "Feature gate default state" feature="ClientsAllowCBOR" enabled=false
+I1027 17:56:05.405828       1 envvar.go:172] "Feature gate default state" feature="ClientsPreferCBOR" enabled=false
+I1027 17:56:05.405871       1 envvar.go:172] "Feature gate default state" feature="InformerResourceVersion" enabled=false
+I1027 17:56:05.405879       1 envvar.go:172] "Feature gate default state" feature="InOrderInformers" enabled=true
+I1027 17:56:05.410040       1 main.go:218] CSI driver name: "ebs.csi.aws.com"
+I1027 17:56:05.410067       1 common.go:143] "Probing CSI driver for readiness"
+I1027 17:56:05.413253       1 main.go:262] Start NewCSISnapshotSideCarController with snapshotter [ebs.csi.aws.com] kubeconfig [] csiTimeout [1m0s] csiAddress [/var/lib/csi/sockets/pluginproxy/csi.sock] resyncPeriod [15m0s] snapshotNamePrefix [snapshot] snapshotNameUUIDLength [824633788344]
+I1027 17:56:05.413773       1 leaderelection.go:257] attempting to acquire leader lease kube-system/external-snapshotter-leader-ebs-csi-aws-com...
+I1027 17:56:05.641515       1 main.go:116] "Version" version="v1.14.0-eksbuild.4"
+I1027 17:56:05.641712       1 feature_gate.go:385] feature gates: {map[]}
+I1027 17:56:05.641947       1 envvar.go:172] "Feature gate default state" feature="ClientsPreferCBOR" enabled=false
+I1027 17:56:05.642000       1 envvar.go:172] "Feature gate default state" feature="InformerResourceVersion" enabled=false
+I1027 17:56:05.642023       1 envvar.go:172] "Feature gate default state" feature="InOrderInformers" enabled=true
+I1027 17:56:05.642261       1 envvar.go:172] "Feature gate default state" feature="WatchListClient" enabled=false
+I1027 17:56:05.642308       1 envvar.go:172] "Feature gate default state" feature="ClientsAllowCBOR" enabled=false
+I1027 17:56:05.643975       1 common.go:143] "Probing CSI driver for readiness"
+I1027 17:56:05.648215       1 main.go:171] "CSI driver name" driverName="ebs.csi.aws.com"
+I1027 17:56:05.649342       1 common.go:143] "Probing CSI driver for readiness"
+I1027 17:56:05.655680       1 leaderelection.go:257] attempting to acquire leader lease kube-system/external-resizer-ebs-csi-aws-com...
+I1027 17:56:05.759746       1 main.go:137] "Calling CSI driver to discover driver name"
+I1027 17:56:05.761340       1 main.go:145] "CSI driver name" driver="ebs.csi.aws.com"
+I1027 17:56:05.761373       1 main.go:174] "ServeMux listening" address="0.0.0.0:9808"
+I1027 17:56:04.746714       1 main.go:148] "Region provided via AWS_REGION environment variable" region="us-east-1"
+I1027 17:56:04.748463       1 envvar.go:172] "Feature gate default state" feature="ClientsAllowCBOR" enabled=false
+I1027 17:56:04.748501       1 envvar.go:172] "Feature gate default state" feature="ClientsPreferCBOR" enabled=false
+I1027 17:56:04.748535       1 envvar.go:172] "Feature gate default state" feature="InOrderInformers" enabled=true
+I1027 17:56:04.748542       1 envvar.go:172] "Feature gate default state" feature="InformerResourceVersion" enabled=false
+I1027 17:56:04.748549       1 envvar.go:172] "Feature gate default state" feature="WatchListClient" enabled=false
+I1027 17:56:04.749286       1 driver.go:72] "Driver Information" Driver="ebs.csi.aws.com" Version="v1.51.1"
