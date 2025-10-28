@@ -1,0 +1,3 @@
+# ruleId	alertThreshold	attackStrength	enabled
+10054	IGNORE			# X-Content-Type-Options Header Missing
+10055	IGNORE			# X-Frame-Options Header Missing

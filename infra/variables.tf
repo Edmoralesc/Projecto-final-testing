@@ -1,3 +1,4 @@
+## Global settings
 variable "aws_region" {
   type = string
 }
@@ -11,19 +12,19 @@ variable "env" {
   default = "staging"
 }
 
-# VPC
+## VPC and networking
 variable "vpc_cidr" {
   type    = string
   default = "10.0.0.0/16"
 }
 
-# Availability Zones for the cluster subnets
+## Availability Zones for the cluster subnets (two AZs required by EKS)
 variable "azs" {
   type    = list(string)
   default = ["us-east-1a", "us-east-1d"]
 }
 
-# Node group configuration
+## Node group configuration (impacts EC2 cost)
 variable "node_capacity_type" {
   description = "ON_DEMAND or SPOT"
   type        = string
@@ -57,7 +58,7 @@ variable "node_max" {
   default = 2
 }
 
-# GitHub repo for OIDC trust condition
+## GitHub repo for OIDC trust (lets GitHub Actions assume AWS role securely)
 variable "github_org_repo" {
   type        = string
   description = "GitHub org/repo for OIDC trust, e.g., 'fercanap/Projecto-final-testing'"

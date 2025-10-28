@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-public
+  namespace: staging
+  labels:
+    app.kubernetes.io/name: fastticket-backend
+    app.kubernetes.io/part-of: fastticket
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: classic
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: fastticket-backend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-public
+  namespace: staging
+  labels:
+    app.kubernetes.io/name: fastticket-frontend
+    app.kubernetes.io/part-of: fastticket
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: classic
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: fastticket-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

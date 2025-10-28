@@ -1,0 +1,6 @@
+{
+  "container": { "max_critical": 0, "max_high": 0 },
+  "sca": { "max_critical": 0, "max_high": 0 },
+  "iac": { "max_critical": 0, "max_high": 0 },
+  "dast": { "max_critical": 0, "max_high": 0 }
+}

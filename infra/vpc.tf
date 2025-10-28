@@ -1,3 +1,5 @@
+## Minimal VPC with public subnets for EKS (simpler, but public worker nodes)
+## Cost notes: VPC itself is free; public subnets avoid NAT Gateway charges but expose nodes.
 resource "aws_vpc" "this" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
@@ -22,9 +24,10 @@ locals {
   }
 }
 
+## Public subnets in two AZs required by EKS control plane
 resource "aws_subnet" "public" {
-  for_each                = toset(var.azs)
-  vpc_id                  = aws_vpc.this.id
+  for_each = toset(var.azs)
+  vpc_id   = aws_vpc.this.id
   # Deriva el índice a partir de la letra de la AZ para generar un CIDR único por AZ,
   # evitando conflictos cuando se cambia la lista de AZs (ej: b -> d)
   cidr_block              = cidrsubnet(var.vpc_cidr, 4, local.az_letter_index[regexall("[a-z]$", each.key)[0]])

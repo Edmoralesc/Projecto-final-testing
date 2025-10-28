@@ -1,0 +1,151 @@
+name: CD - Staging
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: true
+
+env:
+  AWS_REGION: us-east-1
+  CLUSTER_NAME: fastticket-eks
+  NAMESPACE: staging
+  DOCKERHUB_REPO_BACKEND: docker.io/fercanap/fastticket-backend
+  DOCKERHUB_REPO_FRONTEND: docker.io/fercanap/fastticket-frontend
+  # Secrets surfaced as env for shell checks and conditionals
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+  # GitHub-provided token/actor for GHCR login fallback
+  GITHUB_TOKEN: ${{ github.token }}
+  GITHUB_ACTOR: ${{ github.actor }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Decide registry and login
+        id: decide
+        run: |
+          set -euo pipefail
+          if [ -n "${DOCKERHUB_USERNAME:-}" ] && [ -n "${DOCKERHUB_TOKEN:-}" ]; then
+            echo "IMAGE_BACKEND=${DOCKERHUB_REPO_BACKEND}" >> "$GITHUB_ENV"
+            echo "IMAGE_FRONTEND=${DOCKERHUB_REPO_FRONTEND}" >> "$GITHUB_ENV"
+            echo "Using Docker Hub"
+            echo "::group::docker login (Docker Hub)"
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            echo "::endgroup::"
+          else
+            echo "IMAGE_BACKEND=ghcr.io/${GITHUB_REPOSITORY_OWNER}/fastticket-backend" >> "$GITHUB_ENV"
+            echo "IMAGE_FRONTEND=ghcr.io/${GITHUB_REPOSITORY_OWNER}/fastticket-frontend" >> "$GITHUB_ENV"
+            echo "Docker Hub secrets missing; using GHCR"
+            echo "::group::docker login (GHCR)"
+            echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+            echo "::endgroup::"
+          fi
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./api
+          file: ./api/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_BACKEND }}:${{ github.sha }}
+            ${{ env.IMAGE_BACKEND }}:staging
+          platforms: linux/amd64
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_FRONTEND }}:${{ github.sha }}
+            ${{ env.IMAGE_FRONTEND }}:staging
+          platforms: linux/amd64
+
+      - name: Configure AWS credentials (OIDC)
+        if: env.AWS_ROLE_TO_ASSUME != ''
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update kubeconfig
+        if: env.AWS_ROLE_TO_ASSUME != ''
+        run: |
+          aws eks update-kubeconfig --name "$CLUSTER_NAME" --region "$AWS_REGION"
+
+      - name: Deploy kustomize overlay (staging)
+        if: env.AWS_ROLE_TO_ASSUME != ''
+        run: |
+          kubectl apply -k k8s/overlays/staging
+
+      - name: Patch deployment images to :staging
+        if: env.AWS_ROLE_TO_ASSUME != ''
+        run: |
+          kubectl -n "$NAMESPACE" set image deployment/backend backend=${{ env.IMAGE_BACKEND }}:staging
+          kubectl -n "$NAMESPACE" set image deployment/frontend frontend=${{ env.IMAGE_FRONTEND }}:staging
+
+      - name: Wait for rollout
+        if: env.AWS_ROLE_TO_ASSUME != ''
+        run: |
+          kubectl -n "$NAMESPACE" rollout status deployment/backend --timeout=120s
+          kubectl -n "$NAMESPACE" rollout status deployment/frontend --timeout=120s
+          kubectl -n "$NAMESPACE" rollout status statefulset/postgres --timeout=180s
+
+      - name: Smoke test backend /health
+        if: env.AWS_ROLE_TO_ASSUME != ''
+        run: |
+          set -euo pipefail
+          kubectl -n "$NAMESPACE" get pods
+          # Port-forward in background
+          kubectl -n "$NAMESPACE" port-forward deploy/backend 18080:8000 >/tmp/pf.log 2>&1 &
+          PF_PID=$!
+          sleep 3
+          for i in {1..10}; do
+            CODE=$(curl -sS -o /dev/null -w "%{http_code}" http://127.0.0.1:18080/health || true)
+            echo "Attempt $i: status=$CODE"
+            if [ "$CODE" = "200" ]; then
+              break
+            fi
+            sleep 3
+          done
+          kill $PF_PID || true
+          if [ "$CODE" != "200" ]; then
+            echo "Health check failed with $CODE" >&2
+            exit 1
+          fi
+
+      - name: Collect logs (artifact)
+        if: ${{ always() }}
+        run: |
+          mkdir -p logs
+          kubectl -n "$NAMESPACE" get pods -o wide > logs/stage3_pods.log || true
+          kubectl -n "$NAMESPACE" describe pods > logs/stage3_describe.log || true
+          kubectl -n "$NAMESPACE" logs --all-containers=true --prefix=true > logs/stage3_logs.log || true
+          kubectl -n "$NAMESPACE" get events --sort-by=.lastTimestamp > logs/stage3_events.log || true
+
+      - name: Upload logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-deploy-logs
+          path: logs/
+          retention-days: 5

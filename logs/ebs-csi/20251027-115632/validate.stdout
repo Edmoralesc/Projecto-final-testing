@@ -1,0 +1,2 @@
+[2025-10-27T11:57:23-0600] Applying StorageClass/PVC/Pod for dynamic provisioning test
+The StorageClass "gp3" is invalid: parameters: Forbidden: updates to parameters are forbidden.

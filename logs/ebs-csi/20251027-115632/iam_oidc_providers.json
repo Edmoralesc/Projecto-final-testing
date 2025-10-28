@@ -1,0 +1,10 @@
+{
+    "OpenIDConnectProviderList": [
+        {
+            "Arn": "arn:aws:iam::665516437576:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/3B41BA9FFFC52A90E17EE3A80FECDDD2"
+        },
+        {
+            "Arn": "arn:aws:iam::665516437576:oidc-provider/token.actions.githubusercontent.com"
+        }
+    ]
+}
