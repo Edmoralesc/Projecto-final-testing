@@ -58,18 +58,6 @@ No pip-audit report
 ### DAST (ZAP)
 - ZAP report: reports/zap/zap.html (if generated)
 
-## Cost (Optimization)
-- AWS Cost (last 7 days):
-```
-Cost Explorer not accessible with current credentials
-```
-- Recommendations:
-  - Keep cluster small (1 node) off-hours or consider pause options
-  - Use smaller base images and multi-stage builds to reduce image size
-  - Enable image caching in CI to speed builds
-
-## Final Validation
-- See logs/final_validation_summary.log for consolidated results
 
 ## Appendix
 - Infra: infra/
