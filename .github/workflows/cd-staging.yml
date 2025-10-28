@@ -50,8 +50,8 @@ jobs:
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             echo "::endgroup::"
           else
-            echo "IMAGE_BACKEND=ghcr.io/${GITHUB_REPOSITORY_OWNER}/fastticket-backend" >> "$GITHUB_ENV"
-            echo "IMAGE_FRONTEND=ghcr.io/${GITHUB_REPOSITORY_OWNER}/fastticket-frontend" >> "$GITHUB_ENV"
+            echo "IMAGE_BACKEND=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/fastticket-backend" >> "$GITHUB_ENV"
+            echo "IMAGE_FRONTEND=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/fastticket-frontend" >> "$GITHUB_ENV"
             echo "Docker Hub secrets missing; using GHCR"
             echo "::group::docker login (GHCR)"
             echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
